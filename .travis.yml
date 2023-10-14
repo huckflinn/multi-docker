@@ -1,0 +1,16 @@
+sudo: required
+
+services:
+  - docker
+
+before install:
+  - docker build -t huckflinn/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true huckflinn/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t huckflinn/multi-client ./client
+  - docker build -t huckflinn/multi-nginx ./nginx
+  - docker build -t huckflinn/multi-server ./server
+  - docker build -t huckflinn/multi-worker ./worker
